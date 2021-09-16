@@ -7,19 +7,163 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace DynamicRolesPolicy.Server.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("00000000000000_CreateIdentitySchema")]
-    partial class CreateIdentitySchema
+    [Migration("20210916160423_CreateInitialSchema")]
+    partial class CreateInitialSchema
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseIdentityColumns()
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.0-rc.1.20417.2");
+                .HasAnnotation("ProductVersion", "6.0.0-rc.1.21452.10")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+
+            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
+                {
+                    b.Property<string>("UserCode")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasMaxLength(50000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("DeviceCode")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("Expiration")
+                        .IsRequired()
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SubjectId")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("UserCode");
+
+                    b.HasIndex("DeviceCode")
+                        .IsUnique();
+
+                    b.HasIndex("Expiration");
+
+                    b.ToTable("DeviceCodes", (string)null);
+                });
+
+            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Key", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Algorithm")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("DataProtected")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsX509Certificate")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Use")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Version")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Use");
+
+                    b.ToTable("Keys");
+                });
+
+            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
+                {
+                    b.Property<string>("Key")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("ConsumedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreationTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasMaxLength(50000)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime?>("Expiration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SubjectId")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Key");
+
+                    b.HasIndex("ConsumedTime");
+
+                    b.HasIndex("Expiration");
+
+                    b.HasIndex("SubjectId", "ClientId", "Type");
+
+                    b.HasIndex("SubjectId", "SessionId", "Type");
+
+                    b.ToTable("PersistedGrants", (string)null);
+                });
 
             modelBuilder.Entity("DynamicRolesPolicy.Server.Models.ApplicationUser", b =>
                 {
@@ -83,151 +227,89 @@ namespace DynamicRolesPolicy.Server.Data.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("AspNetUsers");
-                });
+                    b.ToTable("AspNetUsers", (string)null);
 
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.DeviceFlowCodes", b =>
-                {
-                    b.Property<string>("UserCode")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasMaxLength(52400)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("DeviceCode")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("Expiration")
-                        .IsRequired()
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SessionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SubjectId")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.HasKey("UserCode");
-
-                    b.HasIndex("DeviceCode")
-                        .IsUnique();
-
-                    b.HasIndex("Expiration");
-
-                    b.ToTable("DeviceCodes");
-                });
-
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.Key", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Algorithm")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)")
-                        .HasMaxLength(52400);
-
-                    b.Property<bool>("DataProtected")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("IsX509Certificate")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Use")
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int>("Version")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Use");
-
-                    b.ToTable("Keys");
-                });
-
-            modelBuilder.Entity("Duende.IdentityServer.EntityFramework.Entities.PersistedGrant", b =>
-                {
-                    b.Property<string>("Key")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("ClientId")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("ConsumedTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Data")
-                        .IsRequired()
-                        .HasMaxLength(52400)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<DateTime?>("Expiration")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("SessionId")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("SubjectId")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.HasKey("Key");
-
-                    b.HasIndex("ConsumedTime");
-
-                    b.HasIndex("Expiration");
-
-                    b.HasIndex("SubjectId", "ClientId", "Type");
-
-                    b.HasIndex("SubjectId", "SessionId", "Type");
-
-                    b.ToTable("PersistedGrants");
+                    b.HasData(
+                        new
+                        {
+                            Id = "2c023b39-c33c-4a00-b2f5-78c136d06538",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "17dbe0d9-7e53-4070-b48b-c9ab08fb4abb",
+                            Email = "serenity@serenity.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "SERENITY@SERENITY.COM",
+                            NormalizedUserName = "SERENITY@SERENITY.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEMGL4pVWII0L3VNAVVYPHu355/Yu03sLtrRuSL2YUAphaKCxLklYopQfw8dB0KMeng==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "WGCHLMIS3OQTFZQGWROFINX7H5SJFVFO",
+                            TwoFactorEnabled = false,
+                            UserName = "serenity@serenity.com"
+                        },
+                        new
+                        {
+                            Id = "30cfa766-bd0a-4c51-b993-0a920bae840b",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "e57cdd73-cb46-42c7-83db-e6f92475c518",
+                            Email = "cruz@cruz.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "CRUZ@CRUZ.COM",
+                            NormalizedUserName = "CRUZ@CRUZ.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEPAHB8DFKf/FN1ZDdakuGj8R26fVvxvAEXmh7mnwMDbZ9JGsCs2LWdgXd2G2vl2Yww==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "IQ22XYGXRSOVNFANWBEBENQRSJWIVYYA",
+                            TwoFactorEnabled = false,
+                            UserName = "cruz@cruz.com"
+                        },
+                        new
+                        {
+                            Id = "381bf67f-5b97-461e-b219-9d1e00915a2b",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "c9cde903-9ce3-4642-aa43-aa0591d73d4e",
+                            Email = "tyler@tyler.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "TYLER@TYLER.COM",
+                            NormalizedUserName = "TYLER@TYLER.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEGaCG8YPurptXeaVi8qUWuOtZiIkgHipQOVNEKPqcUBw0waUJvlYCap2pEOT5O9KwA==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "J7FNK2P73722AXWB67TSMYC5D6BZZCFD",
+                            TwoFactorEnabled = false,
+                            UserName = "tyler@tyler.com"
+                        },
+                        new
+                        {
+                            Id = "ea5c3a35-54b0-4e97-b333-621b61efa340",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "98babf1e-a279-46a5-a605-6df9abfe5b15",
+                            Email = "abigail@abigail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "ABIGAIL@ABIGAIL.COM",
+                            NormalizedUserName = "ABIGAIL@ABIGAIL.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEFxIhB4Lpw1IcAqc7MgyQviDQ1LISPx0m1nN+ILn3IesP/ei0L/8JmzuowbEHPj3JQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "HRD6JI2RRXLFQS3HU7BXBDNTVWQM2M6I",
+                            TwoFactorEnabled = false,
+                            UserName = "abigail@abigail.com"
+                        },
+                        new
+                        {
+                            Id = "fe85d469-a528-4608-bc64-68fc473760f0",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "2cbfdb69-90c0-403d-bcc3-863951d0b26b",
+                            Email = "brian@brian.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = true,
+                            NormalizedEmail = "BRIAN@BRIAN.COM",
+                            NormalizedUserName = "BRIAN@BRIAN.COM",
+                            PasswordHash = "AQAAAAEAACcQAAAAEOfWy0Ly3Ja7pkp102fveMhB1XEe9/ml78/POeZxM/KlAfW+dJanQDXnRQcP9+cJ1Q==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "ZI5MWHJOT6GYRRC3ULTMTBKBHQKR3T5B",
+                            TwoFactorEnabled = false,
+                            UserName = "brian@brian.com"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -254,15 +336,39 @@ namespace DynamicRolesPolicy.Server.Data.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("AspNetRoles");
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1acbb826-92d7-4ae8-9ffb-39f54d73751e",
+                            ConcurrencyStamp = "1e6e06a9-125a-449b-9c10-18473fcefd33",
+                            Name = "Administrator",
+                            NormalizedName = "ADMINISTRATOR"
+                        },
+                        new
+                        {
+                            Id = "2e5be973-8c9c-4367-b8d2-06b98dc269d8",
+                            ConcurrencyStamp = "33bfa1be-5d33-4401-9cef-01970ba64af7",
+                            Name = "Moderator",
+                            NormalizedName = "MODERATOR"
+                        },
+                        new
+                        {
+                            Id = "6c74fd23-e927-4f37-bbc6-2f70eb4716dd",
+                            ConcurrencyStamp = "0fbcc8f1-5707-4e6b-9b37-8ce770fad2a5",
+                            Name = "TenantAdministrator",
+                            NormalizedName = "TENANTADMINISTRATOR"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -278,15 +384,16 @@ namespace DynamicRolesPolicy.Server.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetRoleClaims");
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("ClaimType")
                         .HasColumnType("nvarchar(max)");
@@ -302,7 +409,7 @@ namespace DynamicRolesPolicy.Server.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserClaims");
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
@@ -326,7 +433,7 @@ namespace DynamicRolesPolicy.Server.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("AspNetUserLogins");
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
@@ -341,7 +448,39 @@ namespace DynamicRolesPolicy.Server.Data.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("AspNetUserRoles");
+                    b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "2c023b39-c33c-4a00-b2f5-78c136d06538",
+                            RoleId = "6c74fd23-e927-4f37-bbc6-2f70eb4716dd"
+                        },
+                        new
+                        {
+                            UserId = "30cfa766-bd0a-4c51-b993-0a920bae840b",
+                            RoleId = "2e5be973-8c9c-4367-b8d2-06b98dc269d8"
+                        },
+                        new
+                        {
+                            UserId = "381bf67f-5b97-461e-b219-9d1e00915a2b",
+                            RoleId = "6c74fd23-e927-4f37-bbc6-2f70eb4716dd"
+                        },
+                        new
+                        {
+                            UserId = "381bf67f-5b97-461e-b219-9d1e00915a2b",
+                            RoleId = "2e5be973-8c9c-4367-b8d2-06b98dc269d8"
+                        },
+                        new
+                        {
+                            UserId = "ea5c3a35-54b0-4e97-b333-621b61efa340",
+                            RoleId = "2e5be973-8c9c-4367-b8d2-06b98dc269d8"
+                        },
+                        new
+                        {
+                            UserId = "fe85d469-a528-4608-bc64-68fc473760f0",
+                            RoleId = "1acbb826-92d7-4ae8-9ffb-39f54d73751e"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -362,7 +501,7 @@ namespace DynamicRolesPolicy.Server.Data.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("AspNetUserTokens");
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

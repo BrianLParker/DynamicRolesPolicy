@@ -1,4 +1,5 @@
 using DynamicRolesPolicy.Client;
+using DynamicRolesPolicy.Shared.Policies;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
@@ -13,6 +14,6 @@ builder.Services.AddHttpClient("DynamicRolesPolicy.ServerAPI", client => client.
 // Supply HttpClient instances that include access tokens when making requests to the server project
 builder.Services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("DynamicRolesPolicy.ServerAPI"));
 
-builder.Services.AddApiAuthorization();
-
+builder.Services.AddApiAuthorization().AddAccountClaimsPrincipalFactory<CustomUserFactory>();
+builder.Services.AddPolicies(builder.Configuration);
 await builder.Build().RunAsync();
