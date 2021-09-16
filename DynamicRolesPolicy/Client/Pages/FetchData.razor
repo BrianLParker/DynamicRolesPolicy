@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
 @using DynamicRolesPolicy.Shared
-@attribute [Authorize]
+@attribute [Authorize(Policy ="HasARequiredRole")]
 @inject HttpClient Http
 
 <PageTitle>Weather forecast</PageTitle>

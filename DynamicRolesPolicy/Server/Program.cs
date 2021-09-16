@@ -1,6 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using DynamicRolesPolicy.Server.Data;
 using DynamicRolesPolicy.Server.Models;
+using DynamicRolesPolicy.Shared.Policies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +33,7 @@ builder.Services.AddAuthentication()
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddPolicies(builder.Configuration);
 
 var app = builder.Build();
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DynamicRolesPolicy.Server.Controllers
 {
-    [Authorize]
+    [Authorize(Policy = "HasARequiredRole")]
     [ApiController]
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
